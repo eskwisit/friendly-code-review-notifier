@@ -1,0 +1,15 @@
+---
+name: Friendly Code Review Notifier
+description: GitHub action that sends a notification when Pull Requests are stacking up.
+author: mxxlrfu
+inputs:
+  token:
+    description: Repository Token
+    default: ${{ github.token }}
+  webhook:
+    description: Webhook URL
+  treshold:
+    default: 3
+runs:
+  using: node16
+  main: dist/index.js
