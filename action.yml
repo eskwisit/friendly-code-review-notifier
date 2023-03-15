@@ -1,6 +1,6 @@
 ---
 name: Friendly Code Review Notifier
-description: GitHub action that sends a notification when Pull Requests are stacking up.
+description: Friendly code review notifier based on the amount of open pull requests.
 author: mxxlrfu
 inputs:
   token:

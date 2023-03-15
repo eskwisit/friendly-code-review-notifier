@@ -1,7 +1,7 @@
 {
 	"name": "friendly-code-review-notifier",
 	"version": "1.0.0",
-	"description": "GitHub action that sends a Slack notification when Pull Requests are stacking up.",
+	"description": "Friendly code review notifier based on the amount of open pull requests.",
 	"main": "src/index.js",
 	"type": "module",
 	"scripts": {

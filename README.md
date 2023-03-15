@@ -1,5 +1,7 @@
 # friendly-code-review-notifier
 
+Friendly code review notifier based on the amount of open pull requests.
+
 ## Usage
 
 ```yml
