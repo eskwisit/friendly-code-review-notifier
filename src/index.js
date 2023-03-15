@@ -34,7 +34,7 @@ const run = async () => {
 		const open_pull_requests = query.data.length;
 		const payload = variations[Math.floor(Math.random() * variations.length)];
 
-		if (open_pull_requests % treshold === 0 || open_pr > 8) {
+		if (open_pull_requests % treshold === 0 || open_pull_requests > 8) {
 			octokit.request(`POST ${webhook}`, {
 				data: payload,
 				headers: {

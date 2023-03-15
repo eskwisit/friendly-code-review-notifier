@@ -174,7 +174,7 @@ var run = function() {
                     query = _state.sent();
                     open_pull_requests = query.data.length;
                     payload = variations[Math.floor(Math.random() * variations.length)];
-                    if (open_pull_requests % treshold === 0 || open_pr > 8) {
+                    if (open_pull_requests % treshold === 0 || open_pull_requests > 8) {
                         octokit.request("POST ".concat(webhook), {
                             data: payload,
                             headers: {
