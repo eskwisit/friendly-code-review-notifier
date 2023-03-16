@@ -45,18 +45,26 @@ const run = async () => {
 
 		const open_pull_requests = query.data.length;
 
-		const variant = variations[Math.floor(Math.random() * variations.length)];
-
-		payload.unshift(variant);
-		payload.push(thank_you_all);
-
 		if (open_pull_requests % treshold === 0 || open_pull_requests > 8) {
+			const variant = variations[Math.floor(Math.random() * variations.length)];
+
+			payload.push(variant);
+
+			query.data.forEach(({ title, url, reviews }) => {
+				const block = block_template(title, url, reviews);
+				payload.push(block);
+			});
+
+			payload.push(thank_you_all);
+
 			octokit.request(`POST ${webhook}`, {
 				data: payload,
 				headers: {
 					'content-type': 'application/json',
 				},
 			});
+		} else {
+			core.info(`Nothing to notify right now :ok_hand:`);
 		}
 	} catch (error) {
 		core.setFailed(error.message);

@@ -182,16 +182,24 @@ var run = function() {
                         payload.push(block);
                     });
                     open_pull_requests = query.data.length;
-                    variant = variations[Math.floor(Math.random() * variations.length)];
-                    payload.unshift(variant);
-                    payload.push(thank_you_all);
+
                     if (open_pull_requests % treshold === 0 || open_pull_requests > 8) {
+                        variant = variations[Math.floor(Math.random() * variations.length)];
+                        payload.push(variant);
+                        query.data.forEach(function(param) {
+                            var title = param.title, url = param.url, reviews = param.reviews;
+                            var block = block_template(title, url, reviews);
+                            payload.push(block);
+                        });
+                        payload.push(thank_you_all);
                         octokit.request("POST ".concat(webhook), {
                             data: payload,
                             headers: {
                                 "content-type": "application/json"
                             }
                         });
+                    } else {
+                        core.info("Nothing to notify right now :ok_hand:");
                     }
                     return [
                         3,
