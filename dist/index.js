@@ -106,10 +106,10 @@ var __generator = this && this.__generator || function(thisArg, body) {
                     continue;
             }
             op = body.call(thisArg, _);
-        } catch (e) {
+        } catch (e1) {
             op = [
                 6,
-                e
+                e1
             ];
             y = 0;
         } finally{
@@ -143,7 +143,7 @@ var variations = [
 ];
 var run = function() {
     var _ref = _asyncToGenerator(function() {
-        var token, webhook, treshold, octokit, query, open_pull_requests, payload, error;
+        var payload, token, webhook, treshold, octokit, query, open_pull_requests, variant, error;
         return __generator(this, function(_state) {
             switch(_state.label){
                 case 0:
@@ -153,6 +153,7 @@ var run = function() {
                         ,
                         3
                     ]);
+                    payload = [];
                     token = core.getInput("token", {
                         required: true
                     });
@@ -173,8 +174,17 @@ var run = function() {
                     ];
                 case 1:
                     query = _state.sent();
+                    query.data.forEach(function(pull_request) {
+                        var title = pull_request.title;
+                        var url = pull_request.url;
+                        var reviews = pull_request.reviews;
+                        var block = block_template(title, url, reviews);
+                        payload.push(block);
+                    });
                     open_pull_requests = query.data.length;
-                    payload = variations[Math.floor(Math.random() * variations.length)];
+                    variant = variations[Math.floor(Math.random() * variations.length)];
+                    payload.unshift(variant);
+                    payload.push(thank_you_all);
                     if (open_pull_requests % treshold === 0 || open_pull_requests > 8) {
                         octokit.request("POST ".concat(webhook), {
                             data: payload,
@@ -206,4 +216,32 @@ var run = function() {
     };
 }();
 run();
+var block_template = function(title, url, reviews) {
+    return {
+        type: "section",
+        text: {
+            type: "mrkdwn",
+            text: "".concat(title, " (").concat(reviews, " reviews)")
+        },
+        accessory: {
+            type: "button",
+            text: {
+                type: "plain_text",
+                text: "View"
+            },
+            url: url,
+            action_id: "button-action"
+        }
+    };
+};
+var thank_you_all = {
+    type: "context",
+    elements: [
+        {
+            type: "mrkdwn",
+            text: "Thank you all :bow:",
+            e: e
+        }
+    ]
+};
 
