@@ -27,6 +27,58 @@ function _asyncToGenerator(fn) {
         });
     };
 }
+function _defineProperty(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+function _objectSpread(target) {
+    for(var i = 1; i < arguments.length; i++){
+        var source = arguments[i] != null ? arguments[i] : {};
+        var ownKeys = Object.keys(source);
+        if (typeof Object.getOwnPropertySymbols === "function") {
+            ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function(sym) {
+                return Object.getOwnPropertyDescriptor(source, sym).enumerable;
+            }));
+        }
+        ownKeys.forEach(function(key) {
+            _defineProperty(target, key, source[key]);
+        });
+    }
+    return target;
+}
+function ownKeys(object, enumerableOnly) {
+    var keys = Object.keys(object);
+    if (Object.getOwnPropertySymbols) {
+        var symbols = Object.getOwnPropertySymbols(object);
+        if (enumerableOnly) {
+            symbols = symbols.filter(function(sym) {
+                return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+            });
+        }
+        keys.push.apply(keys, symbols);
+    }
+    return keys;
+}
+function _objectSpreadProps(target, source) {
+    source = source != null ? source : {};
+    if (Object.getOwnPropertyDescriptors) {
+        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+        ownKeys(Object(source)).forEach(function(key) {
+            Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+    }
+    return target;
+}
 var __generator = this && this.__generator || function(thisArg, body) {
     var f, y, t, g, _ = {
         label: 0,
@@ -143,7 +195,7 @@ var variations = [
 ];
 var run = function() {
     var _ref = _asyncToGenerator(function() {
-        var payload, token, webhook, threshold, octokit, query, open_pull_requests, variant, error;
+        var token, webhook, threshold, octokit, query, open_pull_requests, variant, blocks, payload, error;
         return __generator(this, function(_state) {
             switch(_state.label){
                 case 0:
@@ -153,7 +205,6 @@ var run = function() {
                         ,
                         3
                     ]);
-                    payload = [];
                     token = core.getInput("token", {
                         required: true
                     });
@@ -177,13 +228,17 @@ var run = function() {
                     open_pull_requests = query.data.length;
                     if (open_pull_requests % threshold === 0 || open_pull_requests > 8) {
                         variant = variations[Math.floor(Math.random() * variations.length)];
-                        payload.push(variant);
+                        blocks = [];
+                        payload = variant;
                         query.data.forEach(function(param) {
                             var title = param.title, url = param.url, reviews = param.reviews;
                             var block = block_template(title, url, reviews);
-                            payload.push(block);
+                            blocks.push(block);
                         });
-                        payload.push(thank_you_all);
+                        blocks.push(thank_you_all);
+                        payload = _objectSpreadProps(_objectSpread({}, payload), {
+                            blocks: blocks
+                        });
                         octokit.request("POST ".concat(webhook), {
                             data: payload,
                             headers: {

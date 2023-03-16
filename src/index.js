@@ -21,7 +21,6 @@ const variations = [
 
 const run = async () => {
 	try {
-		const payload = [];
 		const token = core.getInput('token', { required: true });
 		const webhook = core.getInput('webhook', { required: true });
 		const threshold = core.getInput('threshold', { required: true });
@@ -37,15 +36,20 @@ const run = async () => {
 
 		if (open_pull_requests % threshold === 0 || open_pull_requests > 8) {
 			const variant = variations[Math.floor(Math.random() * variations.length)];
-
-			payload.push(variant);
+			const blocks = [];
+			let payload = variant;
 
 			query.data.forEach(({ title, url, reviews }) => {
 				const block = block_template(title, url, reviews);
-				payload.push(block);
+				blocks.push(block);
 			});
 
-			payload.push(thank_you_all);
+			blocks.push(thank_you_all);
+
+			payload = {
+				...payload,
+				blocks,
+			};
 
 			octokit.request(`POST ${webhook}`, {
 				data: payload,
