@@ -34,23 +34,24 @@ const run = async () => {
 
 		const open_pull_requests = query.data.length;
 
-		if (open_pull_requests % threshold === 0 || open_pull_requests > 8) {
+		if (open_pull_requests % threshold === 0 || open_pull_requests > threshold * 3) {
 			let payload = variations[Math.floor(Math.random() * variations.length)];
-			const blocks = [
-				{
-					type: 'section',
-					text: {
-						type: 'mrkdown',
-						text: `*${payload.text}*`,
-					},
-				},
-				{
-					type: 'divider',
-				},
-			];
+			const blocks = [];
+
+			blocks.push({
+				type: 'section',
+				text: {
+					type: 'mrkdwn',
+					text: `*${payload.text}*`,
+				}
+			});
+
+			blocks.push({
+				type: 'divider',
+			});
 
 			query.data.forEach(({ title, number, reviews }) => {
-				const url = `https://github.com/jobcloud/marketplace-client/pulls/${number}`;
+				const url = `https://github.com/jobcloud/marketplace-client/pull/${number}`;
 				const block = block_template(title, url, reviews);
 				blocks.push(block);
 			});
@@ -82,7 +83,7 @@ const block_template = (title, url, reviews) => ({
 	type: 'section',
 	text: {
 		type: 'mrkdwn',
-		text: `${title} (${reviews} reviews)`,
+		text: `${title}`,
 	},
 	accessory: {
 		type: 'button',

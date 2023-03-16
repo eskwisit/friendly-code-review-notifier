@@ -226,23 +226,22 @@ var run = function() {
                 case 1:
                     query = _state.sent();
                     open_pull_requests = query.data.length;
-                    if (open_pull_requests % threshold === 0 || open_pull_requests > 8) {
+                    if (open_pull_requests % threshold === 0 || open_pull_requests > threshold * 3) {
                         payload = variations[Math.floor(Math.random() * variations.length)];
-                        blocks = [
-                            {
-                                type: "section",
-                                text: {
-                                    type: "mrkdown",
-                                    text: "*".concat(payload.text, "*")
-                                }
-                            },
-                            {
-                                type: "divider"
+                        blocks = [];
+                        blocks.push({
+                            type: "section",
+                            text: {
+                                type: "mrkdwn",
+                                text: "*".concat(payload.text, "*")
                             }
-                        ];
+                        });
+                        blocks.push({
+                            type: "divider"
+                        });
                         query.data.forEach(function(param) {
                             var title = param.title, number = param.number, reviews = param.reviews;
-                            var url = "https://github.com/jobcloud/marketplace-client/pulls/".concat(number);
+                            var url = "https://github.com/jobcloud/marketplace-client/pull/".concat(number);
                             var block = block_template(title, url, reviews);
                             blocks.push(block);
                         });
@@ -287,7 +286,7 @@ var block_template = function(title, url, reviews) {
         type: "section",
         text: {
             type: "mrkdwn",
-            text: "".concat(title, " (").concat(reviews, " reviews)")
+            text: "".concat(title)
         },
         accessory: {
             type: "button",
