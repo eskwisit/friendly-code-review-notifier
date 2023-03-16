@@ -27,58 +27,6 @@ function _asyncToGenerator(fn) {
         });
     };
 }
-function _defineProperty(obj, key, value) {
-    if (key in obj) {
-        Object.defineProperty(obj, key, {
-            value: value,
-            enumerable: true,
-            configurable: true,
-            writable: true
-        });
-    } else {
-        obj[key] = value;
-    }
-    return obj;
-}
-function _objectSpread(target) {
-    for(var i = 1; i < arguments.length; i++){
-        var source = arguments[i] != null ? arguments[i] : {};
-        var ownKeys = Object.keys(source);
-        if (typeof Object.getOwnPropertySymbols === "function") {
-            ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function(sym) {
-                return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-            }));
-        }
-        ownKeys.forEach(function(key) {
-            _defineProperty(target, key, source[key]);
-        });
-    }
-    return target;
-}
-function ownKeys(object, enumerableOnly) {
-    var keys = Object.keys(object);
-    if (Object.getOwnPropertySymbols) {
-        var symbols = Object.getOwnPropertySymbols(object);
-        if (enumerableOnly) {
-            symbols = symbols.filter(function(sym) {
-                return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-            });
-        }
-        keys.push.apply(keys, symbols);
-    }
-    return keys;
-}
-function _objectSpreadProps(target, source) {
-    source = source != null ? source : {};
-    if (Object.getOwnPropertyDescriptors) {
-        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-        ownKeys(Object(source)).forEach(function(key) {
-            Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-        });
-    }
-    return target;
-}
 var __generator = this && this.__generator || function(thisArg, body) {
     var f, y, t, g, _ = {
         label: 0,
@@ -176,26 +124,9 @@ var __generator = this && this.__generator || function(thisArg, body) {
 };
 import * as core from "@actions/core";
 import { context, getOctokit } from "@actions/github";
-var variations = [
-    {
-        username: "Pikachu",
-        icon_emoji: "pikachu-dance",
-        text: "Pika! Pika! Pika! Pull requests are piling up. Gotta catch'em all!"
-    },
-    {
-        username: "Pyong",
-        icon_emoji: "pyong-excited",
-        text: "고등학교는 한국에서 어려워요! Nevermind what it means, I just wanted your attention: PR are stacking up."
-    },
-    {
-        username: "Mr. Burns",
-        icon_emoji: "finger-steepling",
-        text: "Smithers! We have to get those PR reviewed quick. They are almost as old as me."
-    }
-];
 var run = function() {
     var _ref = _asyncToGenerator(function() {
-        var token, webhook, threshold, octokit, query, open_pull_requests, payload, blocks, shuffled, error;
+        var token, webhook, threshold, octokit, _context_repo, owner, repo, query, open_pull_requests, blocks, shuffled, payload, error;
         return __generator(this, function(_state) {
             switch(_state.label){
                 case 0:
@@ -215,11 +146,12 @@ var run = function() {
                         required: true
                     });
                     octokit = getOctokit(token);
+                    _context_repo = context.repo, owner = _context_repo.owner, repo = _context_repo.repo;
                     return [
                         4,
                         octokit.rest.pulls.list({
-                            owner: context.repo.owner,
-                            repo: context.repo.repo,
+                            owner: owner,
+                            repo: repo,
                             state: "open"
                         })
                     ];
@@ -227,13 +159,12 @@ var run = function() {
                     query = _state.sent();
                     open_pull_requests = query.data.length;
                     if (open_pull_requests % threshold === 0 || open_pull_requests > threshold * 3) {
-                        payload = variations[Math.floor(Math.random() * variations.length)];
                         blocks = [];
                         blocks.push({
                             type: "section",
                             text: {
                                 type: "mrkdwn",
-                                text: "*".concat(payload.text, "* What about these? :slightly_smiling_face:")
+                                text: "*Oops, it looks like PRs are stacking up :notawesome: What about giving a look at these?* :arrow_heading_down:"
                             }
                         });
                         blocks.push({
@@ -244,14 +175,14 @@ var run = function() {
                         }).slice(0, 3);
                         shuffled.forEach(function(param) {
                             var title = param.title, number = param.number, reviews = param.reviews;
-                            var url = "https://github.com/jobcloud/marketplace-client/pull/".concat(number);
+                            var url = "https://github.com/".concat(owner, "/").concat(repo, "/pull/").concat(number);
                             var block = block_template(title, url, reviews);
                             blocks.push(block);
                         });
                         blocks.push(thank_you_all);
-                        payload = _objectSpreadProps(_objectSpread({}, payload), {
+                        payload = {
                             blocks: blocks
-                        });
+                        };
                         octokit.request("POST ".concat(webhook), {
                             data: payload,
                             headers: {
