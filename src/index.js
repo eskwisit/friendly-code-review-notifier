@@ -25,7 +25,7 @@ const run = async () => {
 				type: 'section',
 				text: {
 					type: 'mrkdwn',
-					text: `*Oops, it looks like PRs are stacking up :notawesome: What about giving a look at these?* :arrow_heading_down:`,
+					text: `*Oops, it looks like PRs are stacking up :notawesome: What about this one?* :arrow_heading_down:`,
 				},
 			});
 
@@ -33,7 +33,7 @@ const run = async () => {
 				type: 'divider',
 			});
 
-			const shuffled = query.data.sort(() => 0.5 - Math.random()).slice(0, 3);
+			const shuffled = query.data.sort(() => 0.5 - Math.random()).slice(0, 1);
 
 			shuffled.forEach(({ title, number, reviews }) => {
 				const url = `https://github.com/${owner}/${repo}/pull/${number}`;

@@ -164,7 +164,7 @@ var run = function() {
                             type: "section",
                             text: {
                                 type: "mrkdwn",
-                                text: "*Oops, it looks like PRs are stacking up :notawesome: What about giving a look at these?* :arrow_heading_down:"
+                                text: "*Oops, it looks like PRs are stacking up :notawesome: What about this one?* :arrow_heading_down:"
                             }
                         });
                         blocks.push({
@@ -172,7 +172,7 @@ var run = function() {
                         });
                         shuffled = query.data.sort(function() {
                             return 0.5 - Math.random();
-                        }).slice(0, 3);
+                        }).slice(0, 1);
                         shuffled.forEach(function(param) {
                             var title = param.title, number = param.number, reviews = param.reviews;
                             var url = "https://github.com/".concat(owner, "/").concat(repo, "/pull/").concat(number);
