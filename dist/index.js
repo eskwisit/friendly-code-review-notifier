@@ -167,7 +167,8 @@ var run = function() {
                         4,
                         octokit.rest.pulls.list({
                             owner: context.repo.owner,
-                            repo: context.repo.repo
+                            repo: context.repo.repo,
+                            state: "open"
                         })
                     ];
                 case 1:

@@ -29,6 +29,7 @@ const run = async () => {
 		const query = await octokit.rest.pulls.list({
 			owner: context.repo.owner,
 			repo: context.repo.repo,
+			state: 'open'
 		});
 
 		const open_pull_requests = query.data.length;
