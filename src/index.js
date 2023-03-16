@@ -33,6 +33,16 @@ const run = async () => {
 			state: 'open',
 		});
 
+		query.data.forEach((pull_request) => {
+			const title = pull_request.title;
+			const url = pull_request.url;
+			const reviews = pull_request.reviews;
+
+			const block = block_template(title, url, reviews);
+			payload.push(block);
+		});
+
+
 		const open_pull_requests = query.data.length;
 
 		if (open_pull_requests % treshold === 0 || open_pull_requests > 8) {
@@ -85,7 +95,7 @@ const thank_you_all = {
 	elements: [
 		{
 			type: 'mrkdwn',
-			text: 'Thank you all :bow:',
+			text: 'Thank you all :bow:'
 		},
 	],
 };
