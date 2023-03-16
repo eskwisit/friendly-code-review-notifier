@@ -195,7 +195,7 @@ var variations = [
 ];
 var run = function() {
     var _ref = _asyncToGenerator(function() {
-        var token, webhook, threshold, octokit, query, open_pull_requests, variant, blocks, payload, error;
+        var token, webhook, threshold, octokit, query, open_pull_requests, payload, blocks, error;
         return __generator(this, function(_state) {
             switch(_state.label){
                 case 0:
@@ -227,11 +227,22 @@ var run = function() {
                     query = _state.sent();
                     open_pull_requests = query.data.length;
                     if (open_pull_requests % threshold === 0 || open_pull_requests > 8) {
-                        variant = variations[Math.floor(Math.random() * variations.length)];
-                        blocks = [];
-                        payload = variant;
+                        payload = variations[Math.floor(Math.random() * variations.length)];
+                        blocks = [
+                            {
+                                type: "section",
+                                text: {
+                                    type: "mrkdown",
+                                    text: "*".concat(payload.text, "*")
+                                }
+                            },
+                            {
+                                type: "divider"
+                            }
+                        ];
                         query.data.forEach(function(param) {
-                            var title = param.title, url = param.url, reviews = param.reviews;
+                            var title = param.title, number = param.number, reviews = param.reviews;
+                            var url = "https://github.com/jobcloud/marketplace-client/pulls/".concat(number);
                             var block = block_template(title, url, reviews);
                             blocks.push(block);
                         });

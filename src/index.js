@@ -35,11 +35,22 @@ const run = async () => {
 		const open_pull_requests = query.data.length;
 
 		if (open_pull_requests % threshold === 0 || open_pull_requests > 8) {
-			const variant = variations[Math.floor(Math.random() * variations.length)];
-			const blocks = [];
-			let payload = variant;
+			let payload = variations[Math.floor(Math.random() * variations.length)];
+			const blocks = [
+				{
+					type: 'section',
+					text: {
+						type: 'mrkdown',
+						text: `*${payload.text}*`,
+					},
+				},
+				{
+					type: 'divider',
+				},
+			];
 
-			query.data.forEach(({ title, url, reviews }) => {
+			query.data.forEach(({ title, number, reviews }) => {
+				const url = `https://github.com/jobcloud/marketplace-client/pulls/${number}`;
 				const block = block_template(title, url, reviews);
 				blocks.push(block);
 			});
