@@ -191,7 +191,7 @@ var run = function() {
                             }
                         });
                     } else {
-                        core.info("Nothing to notify right now :ok_hand:");
+                        core.info("Nothing to notify right now \uD83D\uDC4C");
                     }
                     return [
                         3,

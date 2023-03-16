@@ -54,7 +54,7 @@ const run = async () => {
 				},
 			});
 		} else {
-			core.info(`Nothing to notify right now :ok_hand:`);
+			core.info(`Nothing to notify right now 👌`);
 		}
 	} catch (error) {
 		core.setFailed(error.message);
