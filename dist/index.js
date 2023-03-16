@@ -239,7 +239,7 @@ var run = function() {
                         blocks.push({
                             type: "divider"
                         });
-                        shuffled = array.sort(function() {
+                        shuffled = query.data.sort(function() {
                             return 0.5 - Math.random();
                         }).slice(0, 3);
                         shuffled.forEach(function(param) {

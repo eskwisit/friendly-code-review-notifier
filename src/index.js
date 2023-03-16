@@ -50,7 +50,7 @@ const run = async () => {
 				type: 'divider',
 			});
 
-			const shuffled = array.sort(() => 0.5 - Math.random()).slice(0, 3);
+			const shuffled = query.data.sort(() => 0.5 - Math.random()).slice(0, 3);
 
 			shuffled.forEach(({ title, number, reviews }) => {
 				const url = `https://github.com/jobcloud/marketplace-client/pull/${number}`;
