@@ -143,7 +143,7 @@ var variations = [
 ];
 var run = function() {
     var _ref = _asyncToGenerator(function() {
-        var token, webhook, treshold, octokit, query, open_pull_requests, payload, error;
+        var payload, token, webhook, treshold, octokit, query, open_pull_requests, variant, error;
         return __generator(this, function(_state) {
             switch(_state.label){
                 case 0:
@@ -153,6 +153,7 @@ var run = function() {
                         ,
                         3
                     ]);
+                    payload = [];
                     token = core.getInput("token", {
                         required: true
                     });
@@ -174,14 +175,23 @@ var run = function() {
                 case 1:
                     query = _state.sent();
                     open_pull_requests = query.data.length;
-                    payload = variations[Math.floor(Math.random() * variations.length)];
                     if (open_pull_requests % treshold === 0 || open_pull_requests > 8) {
+                        variant = variations[Math.floor(Math.random() * variations.length)];
+                        payload.push(variant);
+                        query.data.forEach(function(param) {
+                            var title = param.title, url = param.url, reviews = param.reviews;
+                            var block = block_template(title, url, reviews);
+                            payload.push(block);
+                        });
+                        payload.push(thank_you_all);
                         octokit.request("POST ".concat(webhook), {
                             data: payload,
                             headers: {
                                 "content-type": "application/json"
                             }
                         });
+                    } else {
+                        core.info("Nothing to notify right now :ok_hand:");
                     }
                     return [
                         3,
@@ -206,4 +216,31 @@ var run = function() {
     };
 }();
 run();
+var block_template = function(title, url, reviews) {
+    return {
+        type: "section",
+        text: {
+            type: "mrkdwn",
+            text: "".concat(title, " (").concat(reviews, " reviews)")
+        },
+        accessory: {
+            type: "button",
+            text: {
+                type: "plain_text",
+                text: "View"
+            },
+            url: url,
+            action_id: "button-action"
+        }
+    };
+};
+var thank_you_all = {
+    type: "context",
+    elements: [
+        {
+            type: "mrkdwn",
+            text: "Thank you all :bow:"
+        }
+    ]
+};
 

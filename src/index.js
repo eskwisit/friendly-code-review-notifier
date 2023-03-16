@@ -21,6 +21,7 @@ const variations = [
 
 const run = async () => {
 	try {
+		const payload = [];
 		const token = core.getInput('token', { required: true });
 		const webhook = core.getInput('webhook', { required: true });
 		const treshold = core.getInput('treshold', { required: true });
@@ -29,19 +30,31 @@ const run = async () => {
 		const query = await octokit.rest.pulls.list({
 			owner: context.repo.owner,
 			repo: context.repo.repo,
-			state: 'open'
+			state: 'open',
 		});
 
 		const open_pull_requests = query.data.length;
-		const payload = variations[Math.floor(Math.random() * variations.length)];
 
 		if (open_pull_requests % treshold === 0 || open_pull_requests > 8) {
+			const variant = variations[Math.floor(Math.random() * variations.length)];
+
+			payload.push(variant);
+
+			query.data.forEach(({ title, url, reviews }) => {
+				const block = block_template(title, url, reviews);
+				payload.push(block);
+			});
+
+			payload.push(thank_you_all);
+
 			octokit.request(`POST ${webhook}`, {
 				data: payload,
 				headers: {
 					'content-type': 'application/json',
 				},
 			});
+		} else {
+			core.info(`Nothing to notify right now :ok_hand:`);
 		}
 	} catch (error) {
 		core.setFailed(error.message);
@@ -49,3 +62,30 @@ const run = async () => {
 };
 
 run();
+
+const block_template = (title, url, reviews) => ({
+	type: 'section',
+	text: {
+		type: 'mrkdwn',
+		text: `${title} (${reviews} reviews)`,
+	},
+	accessory: {
+		type: 'button',
+		text: {
+			type: 'plain_text',
+			text: 'View',
+		},
+		url,
+		action_id: 'button-action',
+	},
+});
+
+const thank_you_all = {
+	type: 'context',
+	elements: [
+		{
+			type: 'mrkdwn',
+			text: 'Thank you all :bow:',
+		},
+	],
+};
