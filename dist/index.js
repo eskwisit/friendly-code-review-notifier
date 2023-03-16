@@ -106,10 +106,10 @@ var __generator = this && this.__generator || function(thisArg, body) {
                     continue;
             }
             op = body.call(thisArg, _);
-        } catch (e) {
+        } catch (e1) {
             op = [
                 6,
-                e
+                e1
             ];
             y = 0;
         } finally{
@@ -174,7 +174,15 @@ var run = function() {
                     ];
                 case 1:
                     query = _state.sent();
+                    query.data.forEach(function(pull_request) {
+                        var title = pull_request.title;
+                        var url = pull_request.url;
+                        var reviews = pull_request.reviews;
+                        var block = block_template(title, url, reviews);
+                        payload.push(block);
+                    });
                     open_pull_requests = query.data.length;
+
                     if (open_pull_requests % treshold === 0 || open_pull_requests > 8) {
                         variant = variations[Math.floor(Math.random() * variations.length)];
                         payload.push(variant);
