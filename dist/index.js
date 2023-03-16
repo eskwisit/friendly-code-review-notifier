@@ -106,10 +106,10 @@ var __generator = this && this.__generator || function(thisArg, body) {
                     continue;
             }
             op = body.call(thisArg, _);
-        } catch (e1) {
+        } catch (e) {
             op = [
                 6,
-                e1
+                e
             ];
             y = 0;
         } finally{
@@ -143,7 +143,7 @@ var variations = [
 ];
 var run = function() {
     var _ref = _asyncToGenerator(function() {
-        var payload, token, webhook, treshold, octokit, query, open_pull_requests, variant, error;
+        var payload, token, webhook, threshold, octokit, query, open_pull_requests, variant, error;
         return __generator(this, function(_state) {
             switch(_state.label){
                 case 0:
@@ -160,7 +160,7 @@ var run = function() {
                     webhook = core.getInput("webhook", {
                         required: true
                     });
-                    treshold = core.getInput("treshold", {
+                    threshold = core.getInput("threshold", {
                         required: true
                     });
                     octokit = getOctokit(token);
@@ -174,16 +174,8 @@ var run = function() {
                     ];
                 case 1:
                     query = _state.sent();
-                    query.data.forEach(function(pull_request) {
-                        var title = pull_request.title;
-                        var url = pull_request.url;
-                        var reviews = pull_request.reviews;
-                        var block = block_template(title, url, reviews);
-                        payload.push(block);
-                    });
                     open_pull_requests = query.data.length;
-
-                    if (open_pull_requests % treshold === 0 || open_pull_requests > 8) {
+                    if (open_pull_requests % threshold === 0 || open_pull_requests > 8) {
                         variant = variations[Math.floor(Math.random() * variations.length)];
                         payload.push(variant);
                         query.data.forEach(function(param) {

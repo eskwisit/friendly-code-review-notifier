@@ -24,7 +24,7 @@ const run = async () => {
 		const payload = [];
 		const token = core.getInput('token', { required: true });
 		const webhook = core.getInput('webhook', { required: true });
-		const treshold = core.getInput('treshold', { required: true });
+		const threshold = core.getInput('threshold', { required: true });
 		const octokit = getOctokit(token);
 
 		const query = await octokit.rest.pulls.list({
@@ -33,19 +33,9 @@ const run = async () => {
 			state: 'open',
 		});
 
-		query.data.forEach((pull_request) => {
-			const title = pull_request.title;
-			const url = pull_request.url;
-			const reviews = pull_request.reviews;
-
-			const block = block_template(title, url, reviews);
-			payload.push(block);
-		});
-
-
 		const open_pull_requests = query.data.length;
 
-		if (open_pull_requests % treshold === 0 || open_pull_requests > 8) {
+		if (open_pull_requests % threshold === 0 || open_pull_requests > 8) {
 			const variant = variations[Math.floor(Math.random() * variations.length)];
 
 			payload.push(variant);
@@ -95,7 +85,7 @@ const thank_you_all = {
 	elements: [
 		{
 			type: 'mrkdwn',
-			text: 'Thank you all :bow:'
+			text: 'Thank you all :bow:',
 		},
 	],
 };
