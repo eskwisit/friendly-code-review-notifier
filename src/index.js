@@ -42,15 +42,17 @@ const run = async () => {
 				type: 'section',
 				text: {
 					type: 'mrkdwn',
-					text: `*${payload.text}*`,
-				}
+					text: `*${payload.text}*\nWhy not one of these? :awesome:`,
+				},
 			});
 
 			blocks.push({
 				type: 'divider',
 			});
 
-			query.data.forEach(({ title, number, reviews }) => {
+			const shuffled = array.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+			shuffled.forEach(({ title, number, reviews }) => {
 				const url = `https://github.com/jobcloud/marketplace-client/pull/${number}`;
 				const block = block_template(title, url, reviews);
 				blocks.push(block);

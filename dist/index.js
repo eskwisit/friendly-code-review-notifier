@@ -195,7 +195,7 @@ var variations = [
 ];
 var run = function() {
     var _ref = _asyncToGenerator(function() {
-        var token, webhook, threshold, octokit, query, open_pull_requests, payload, blocks, error;
+        var token, webhook, threshold, octokit, query, open_pull_requests, payload, blocks, shuffled, error;
         return __generator(this, function(_state) {
             switch(_state.label){
                 case 0:
@@ -233,13 +233,16 @@ var run = function() {
                             type: "section",
                             text: {
                                 type: "mrkdwn",
-                                text: "*".concat(payload.text, "*")
+                                text: "*".concat(payload.text, "*\nWhy not one of these? :awesome:")
                             }
                         });
                         blocks.push({
                             type: "divider"
                         });
-                        query.data.forEach(function(param) {
+                        shuffled = array.sort(function() {
+                            return 0.5 - Math.random();
+                        }).slice(0, 3);
+                        shuffled.forEach(function(param) {
                             var title = param.title, number = param.number, reviews = param.reviews;
                             var url = "https://github.com/jobcloud/marketplace-client/pull/".concat(number);
                             var block = block_template(title, url, reviews);
