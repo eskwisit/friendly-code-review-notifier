@@ -126,7 +126,7 @@ import * as core from "@actions/core";
 import { context, getOctokit } from "@actions/github";
 var run = function() {
     var _ref = _asyncToGenerator(function() {
-        var token, webhook, threshold, octokit, _context_repo, owner, repo, query, open_pull_requests, blocks, shuffled, payload, error;
+        var token, webhook, threshold, limit, octokit, _context_repo, owner, repo, query, open_pull_requests, blocks, repo_pr_url, shuffled, payload, error;
         return __generator(this, function(_state) {
             switch(_state.label){
                 case 0:
@@ -145,6 +145,9 @@ var run = function() {
                     threshold = core.getInput("threshold", {
                         required: true
                     });
+                    limit = core.getInput("limit", {
+                        required: true
+                    });
                     octokit = getOctokit(token);
                     _context_repo = context.repo, owner = _context_repo.owner, repo = _context_repo.repo;
                     return [
@@ -158,28 +161,21 @@ var run = function() {
                 case 1:
                     query = _state.sent();
                     open_pull_requests = query.data.length;
-                    if (open_pull_requests % threshold === 0 || open_pull_requests > threshold * 3) {
+                    if (open_pull_requests % threshold === 0 || open_pull_requests > Math.pow(threshold)) {
                         blocks = [];
-                        blocks.push({
-                            type: "section",
-                            text: {
-                                type: "mrkdwn",
-                                text: "*Oops, it looks like PRs are stacking up :notawesome: What about this one?* :arrow_heading_down:"
-                            }
-                        });
-                        blocks.push({
-                            type: "divider"
-                        });
-                        shuffled = query.data.sort(function() {
+                        repo_pr_url = "https://github.com/".concat(owner, "/").concat(repo, "/pulls");
+                        shuffled = limit ? query.data.sort(function() {
                             return 0.5 - Math.random();
-                        }).slice(0, 1);
+                        }).slice(0, limit) : query.data;
+                        blocks.push(header_template);
                         shuffled.forEach(function(param) {
-                            var title = param.title, number = param.number, reviews = param.reviews;
-                            var url = "https://github.com/".concat(owner, "/").concat(repo, "/pull/").concat(number);
-                            var block = block_template(title, url, reviews);
+                            var title = param.title, number = param.number, url = param.html_url;
+                            var block = block_template(title, url, number);
                             blocks.push(block);
                         });
-                        blocks.push(thank_you_all);
+                        blocks.push(divider);
+                        blocks.push(link_to_pull_requests(open_pull_requests, repo_pr_url));
+                        blocks.push(thank_you);
                         payload = {
                             blocks: blocks
                         };
@@ -215,30 +211,48 @@ var run = function() {
     };
 }();
 run();
-var block_template = function(title, url, reviews) {
+var header_template = {
+    type: "section",
+    text: {
+        type: "mrkdwn",
+        text: "*Hey, this is Annoy-o-tron :robot_face: Sorry to interrupt but it seems PRs are stacking up*. What about reviewing the unicorn below?"
+    }
+};
+var divider = {
+    type: "divider"
+};
+var block_template = function(title, url, number) {
     return {
         type: "section",
         text: {
             type: "mrkdwn",
-            text: "".concat(title)
+            text: ":unicorn_face:  <".concat(url, "|").concat(title, "> #").concat(number)
         },
         accessory: {
             type: "button",
             text: {
                 type: "plain_text",
-                text: "View"
+                text: "Review"
             },
-            url: url,
-            action_id: "button-action"
+            url: url
         }
     };
 };
-var thank_you_all = {
+var link_to_pull_requests = function(length, repo_url) {
+    return {
+        type: "section",
+        text: {
+            type: "mrkdwn",
+            text: "<".concat(repo_url, "|Click here> to see the full list of PR (").concat(length, ").")
+        }
+    };
+};
+var thank_you = {
     type: "context",
     elements: [
         {
             type: "mrkdwn",
-            text: "Thank you all :bow:"
+            text: "Thank you very much :bow:"
         }
     ]
 };

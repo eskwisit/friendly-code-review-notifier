@@ -6,6 +6,8 @@ const run = async () => {
 		const token = core.getInput('token', { required: true });
 		const webhook = core.getInput('webhook', { required: true });
 		const threshold = core.getInput('threshold', { required: true });
+		const limit = core.getInput('limit', { required: true });
+
 		const octokit = getOctokit(token);
 
 		const { owner, repo } = context.repo;
@@ -18,30 +20,21 @@ const run = async () => {
 
 		const open_pull_requests = query.data.length;
 
-		if (open_pull_requests % threshold === 0 || open_pull_requests > threshold * 3) {
+		if (open_pull_requests % threshold === 0 || open_pull_requests > Math.pow(threshold)) {
 			const blocks = [];
+			const repo_pr_url = `https://github.com/${owner}/${repo}/pulls`;
+			const shuffled = limit ? query.data.sort(() => 0.5 - Math.random()).slice(0, limit) : query.data;
 
-			blocks.push({
-				type: 'section',
-				text: {
-					type: 'mrkdwn',
-					text: `*Oops, it looks like PRs are stacking up :notawesome: What about this one?* :arrow_heading_down:`,
-				},
-			});
+			blocks.push(header_template);
 
-			blocks.push({
-				type: 'divider',
-			});
-
-			const shuffled = query.data.sort(() => 0.5 - Math.random()).slice(0, 1);
-
-			shuffled.forEach(({ title, number, reviews }) => {
-				const url = `https://github.com/${owner}/${repo}/pull/${number}`;
-				const block = block_template(title, url, reviews);
+			shuffled.forEach(({ title, number, html_url: url }) => {
+				const block = block_template(title, url, number);
 				blocks.push(block);
 			});
 
-			blocks.push(thank_you_all);
+			blocks.push(divider);
+			blocks.push(link_to_pull_requests(open_pull_requests, repo_pr_url));
+			blocks.push(thank_you);
 
 			const payload = { blocks };
 
@@ -61,29 +54,48 @@ const run = async () => {
 
 run();
 
-const block_template = (title, url, reviews) => ({
+const header_template = {
 	type: 'section',
 	text: {
 		type: 'mrkdwn',
-		text: `${title}`,
+		text: '*Hey, this is Annoy-o-tron :robot_face: Sorry to interrupt but it seems PRs are stacking up*. What about reviewing the unicorn below?',
+	},
+};
+
+const divider = {
+	type: 'divider',
+};
+
+const block_template = (title, url, number) => ({
+	type: 'section',
+	text: {
+		type: 'mrkdwn',
+		text: `:unicorn_face:  <${url}|${title}> #${number}`,
 	},
 	accessory: {
 		type: 'button',
 		text: {
 			type: 'plain_text',
-			text: 'View',
+			text: 'Review',
 		},
 		url,
-		action_id: 'button-action',
 	},
 });
 
-const thank_you_all = {
+const link_to_pull_requests = (length, repo_url) => ({
+	type: 'section',
+	text: {
+		type: 'mrkdwn',
+		text: `<${repo_url}|Click here> to see the full list of PR (${length}).`,
+	},
+});
+
+const thank_you = {
 	type: 'context',
 	elements: [
 		{
 			type: 'mrkdwn',
-			text: 'Thank you all :bow:',
+			text: 'Thank you very much :bow:',
 		},
 	],
 };

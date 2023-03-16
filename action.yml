@@ -9,7 +9,11 @@ inputs:
   webhook:
     description: Webhook URL
   threshold:
+    description: Emit a notification every n pull request is created
     default: 3
+  limit:
+    description: Limit of pull requests to attach to the notification (0 = unlimited)
+    default: 1
 runs:
   using: node16
   main: dist/index.js

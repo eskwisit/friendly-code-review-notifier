@@ -15,7 +15,8 @@ jobs:
   friendly-code-review-notifier:
     runs-on: ubuntu-latest
     steps:
-      - uses: mxxlrfu/friendly-code-review-notifier@v1.0.0
+      - uses: mxxlrfu/friendly-code-review-notifier@v1.0.1
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          limit: 2
 ```
