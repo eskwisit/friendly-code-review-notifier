@@ -42,7 +42,7 @@ const run = async () => {
 				type: 'section',
 				text: {
 					type: 'mrkdwn',
-					text: `*${payload.text}*\nWhy not one of these? :awesome:`,
+					text: `*${payload.text}*\nWhy these? :slightly_smiling_face:`,
 				},
 			});
 

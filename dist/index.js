@@ -233,7 +233,7 @@ var run = function() {
                             type: "section",
                             text: {
                                 type: "mrkdwn",
-                                text: "*".concat(payload.text, "*\nWhy not one of these? :awesome:")
+                                text: "*".concat(payload.text, "*\nWhy these? :slightly_smiling_face:")
                             }
                         });
                         blocks.push({
