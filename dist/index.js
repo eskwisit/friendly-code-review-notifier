@@ -239,8 +239,7 @@ var thank_you_all = {
     elements: [
         {
             type: "mrkdwn",
-            text: "Thank you all :bow:",
-            e: e
+            text: "Thank you all :bow:"
         }
     ]
 };

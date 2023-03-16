@@ -87,8 +87,7 @@ const thank_you_all = {
 	elements: [
 		{
 			type: 'mrkdwn',
-			text: 'Thank you all :bow:',
-			e
+			text: 'Thank you all :bow:'
 		},
 	],
 };
