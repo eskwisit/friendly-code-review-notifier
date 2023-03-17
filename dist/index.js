@@ -173,7 +173,6 @@ var run = function() {
                             var block = block_template(title, url, number);
                             blocks.push(block);
                         });
-                        blocks.push(divider);
                         blocks.push(link_to_pull_requests(open_pull_requests, repo_pr_url));
                         blocks.push(thank_you);
                         payload = {
