@@ -174,7 +174,6 @@ var run = function() {
                             blocks.push(block);
                         });
                         blocks.push(link_to_pull_requests(open_pull_requests, repo_pr_url));
-                        blocks.push(thank_you);
                         payload = {
                             blocks: blocks
                         };
@@ -242,7 +241,7 @@ var link_to_pull_requests = function(length, repo_url) {
         type: "section",
         text: {
             type: "mrkdwn",
-            text: "<".concat(repo_url, "|Click here> to see the full list of PR (").concat(length, ").")
+            text: "<".concat(repo_url, "|Click here> to see the full list of PR (").concat(length, "). Thank you :bow:")
         }
     };
 };

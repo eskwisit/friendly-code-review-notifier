@@ -33,7 +33,7 @@ const run = async () => {
 			});
 
 			blocks.push(link_to_pull_requests(open_pull_requests, repo_pr_url));
-			blocks.push(thank_you);
+			// blocks.push(thank_you);
 
 			const payload = { blocks };
 
@@ -85,7 +85,7 @@ const link_to_pull_requests = (length, repo_url) => ({
 	type: 'section',
 	text: {
 		type: 'mrkdwn',
-		text: `<${repo_url}|Click here> to see the full list of PR (${length}).`,
+		text: `<${repo_url}|Click here> to see the full list of PR (${length}). Thank you :bow:`,
 	},
 });
 
